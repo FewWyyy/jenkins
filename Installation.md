@@ -1,4 +1,4 @@
-Installation and Configuration Jenkins
+# Installation and Configuration Jenkins
 
 Prerequisites
 Minimum hardware requirements:
@@ -8,8 +8,8 @@ Recommended hardware configuration for a small team:
 •	4 GB+ of RAM
 •	50 GB+ of drive space
 
-Install Jenkins
-
+# Install Jenkins
+```
 sudo wget -O /etc/yum.repos.d/jenkins.repo \
     https://pkg.jenkins.io/redhat-stable/jenkins.repo
 sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io.key
@@ -17,13 +17,17 @@ sudo yum upgrade
 sudo yum install epel-release java-11-openjdk-devel
 sudo yum install jenkins
 sudo systemctl daemon-reload
-
+```
 Start Jenkins
-You can start the Jenkins service with the command:
-sudo systemctl start jenkins
-You can check the status of the Jenkins service using the command:
-sudo systemctl status jenkins
 
+You can start the Jenkins service with the command:
+```
+sudo systemctl start jenkins
+```
+You can check the status of the Jenkins service using the command:
+```
+sudo systemctl status jenkins
+```
 Unlocking Jenkins
 When you first access a new Jenkins instance, you are asked to unlock it using an automatically-generated password.
 1.	Browse to http://localhost:8080 (or whichever port you configured for Jenkins when installing it) and wait until the Unlock Jenkins page appears.
@@ -50,6 +54,7 @@ Jenkins Kubernetes
 Use kube-config helper Node with ServiceAccount 
 
 	Use Service Account Token 
+```
 apiVersion: v1
 clusters:
 - cluster:
@@ -68,7 +73,7 @@ users:
 - name: jenkins
   user:
     token: <kubectl describe secrets ### user secrets>
-
+```
 
 Config Master and Slave
 
@@ -91,6 +96,7 @@ Run Pipeline
 
 Create Pipeline เข้าไปที่ Pipeline syntax  เลือกเป็น With kubeconfig
 Example pipeline script
+```
 pipeline {
     agent {label "Slave1"}
     stages {
@@ -103,7 +109,7 @@ pipeline {
         }
     }
 }
-
+```
 
 
  
@@ -118,6 +124,7 @@ Create JenkinsFile ใส่ไว้ที่ GitLab
  
 
 Example Jenkins file
+```
 pipeline {
     agent {label "Slave1"}
 
@@ -133,44 +140,43 @@ pipeline {
         }
     }
 }
-
+```
  
-Setup HA Jenkins
-
- 
-
-
-
-
-
+# Setup HA Jenkins
  
 Install GitLab
 Ref: Download and install GitLab | GitLab
 Install and configure the necessary dependencies
 sudo yum install -y curl policycoreutils-python openssh-server perl
 # Enable OpenSSH server daemon if not enabled: sudo systemctl status sshd
+```
 sudo systemctl enable sshd
 sudo systemctl start sshd
+```
 
 # Check if opening the firewall is needed with: sudo systemctl status firewalld
+```
 sudo firewall-cmd --permanent --add-service=http
 sudo firewall-cmd --permanent --add-service=https
 sudo systemctl reload firewalld
-
+```
+```
 sudo yum install postfix
 sudo systemctl enable postfix
 sudo systemctl start postfix
-
+```
 
 Add the GitLab package repository and install the package
+```
 curl https://packages.gitlab.com/install/repositories/gitlab/gitlab-ee/script.rpm.sh | sudo bash
+```
 
 Next, install the GitLab package. Make sure you have correctly set up your DNS, and change https://gitlab.example.com to the URL at which you want to access your GitLab instance. Installation will automatically configure and start GitLab at that URL.
 For https:// URLs, GitLab will automatically request a certificate with Let's Encrypt, which requires inbound HTTP access and a valid hostname. You can also use your own certificate or just use http:// (without s).
 If you would like to specify a custom password for the initial administrator user (root), check the documentation. If a password is not specified, a random password will be automatically generated.
-
+```
 sudo EXTERNAL_URL="https://gitlab.example.com" yum install -y gitlab-ee
-
+```
 Browse to the hostname and login
 Unless you provided a custom password during installation, a password will be randomly generated and stored for 24 hours in /etc/gitlab/initial_root_password. Use this password with username root to login.
 See our documentation for detailed instructions on installing and configuration.
@@ -197,6 +203,7 @@ Jenkins SonarQube
 3.	Config Sonarqube in Global tools Configuration 
 4.	Write JenkinsFile
 Example Jenkins File
+```
 pipeline {
     agent {label "master"}
     stages {
@@ -229,6 +236,6 @@ pipeline {
         }
     }
 }
-
+```
 
 
